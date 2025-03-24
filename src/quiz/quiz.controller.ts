@@ -30,4 +30,28 @@ export class QuizController {
     return this.quizService.getOne(id);
   }
 
+  @Get('get')
+  @ApiOperation({ summary: 'Get quiz with pagination' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Limit per page',
+    type: Number,
+  })
+  async getProducts(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ) {
+    const pageNumber = parseInt(page, 10) || 1;
+    const limitNumber = parseInt(limit, 10) || 10;
+    return this.quizService.get(pageNumber, limitNumber);
+  }
+
+
 }

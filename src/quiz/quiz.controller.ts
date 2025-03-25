@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { ApiBody, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { CreateQuizDto } from './quiz/createQuiz.dto';
+import { ChangeQuizDto } from './quiz/changeQuiz.dto';
 
 @Controller('quiz')
 export class QuizController {
@@ -11,13 +12,26 @@ export class QuizController {
   @ApiBody({
     type: CreateQuizDto,
     description:
-      'The data for the new quiz, including a file upload for the main image.',
+      'The data for the new quiz',
   })
-  async create_quiz(
+  async createQuiz(
     @Body() data: CreateQuizDto
   ) {
     return await this.quizService.craeteQuiz(data);
   }
+  @Post('change_quiz')
+  @ApiOperation({ summary: 'Change a new quiz' })
+  @ApiBody({
+    type: ChangeQuizDto,
+    description:
+      'The data for the new quiz, including ',
+  })
+  async changeQuiz(
+    @Body() data: ChangeQuizDto
+  ) {
+    return await this.quizService.changeQuiz(data);
+  }
+
   @Get('get_one')
   @ApiOperation({ summary: 'Get a single product by ID' })
   @ApiQuery({

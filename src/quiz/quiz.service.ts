@@ -1,23 +1,44 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateQuizDto } from './quiz/createQuiz.dto';
+import { ChangeQuizDto } from './quiz/changeQuiz.dto';
 
 @Injectable()
 export class QuizService {
   constructor(private readonly prisma: PrismaService) { }
   async craeteQuiz(data: CreateQuizDto) {
-    const { title, description } = data;
+    try {
+      const { title, description } = data;
+      const quiz = await this.prisma.quiz.create({
+        data: {
+          title,
+          description,
+          questions: { create: [] },
+        },
+      });
 
-    const quiz = await this.prisma.quiz.create({
-      data: {
-        title,
-        description,
-        questions: { create: [] },
-      },
-    });
-
-    return quiz;
+      return quiz;
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
+
+
+  async changeQuiz(data: ChangeQuizDto) {
+    try {
+      const { id, ...quiz } = data
+      await this.findQuiz(id)
+      return await this.prisma.quiz.update({
+        where: { id: id },
+        data: quiz,
+
+      })
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
+  }
+
+
   async getOne(id: string) {
     try {
       const quiz = await this.prisma.quiz.findFirst({
@@ -41,6 +62,9 @@ export class QuizService {
         this.prisma.quiz.findMany({
           skip,
           take: limit,
+          include: {
+            questions: true,
+          }
         }),
         this.prisma.quiz.count(),
       ]);

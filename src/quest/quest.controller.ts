@@ -3,6 +3,7 @@ import { QuestService } from './quest.service';
 import { ApiBody, ApiOperation } from '@nestjs/swagger';
 import { CreateQuestDto } from './dto/createQuest.dto';
 import { ChangeQuestDto } from './dto/changeQuest.dto';
+import { RemoveQuestDto } from './dto/removeQuest.dto';
 
 @Controller('quest')
 export class QuestController {
@@ -19,6 +20,19 @@ export class QuestController {
   ) {
     return await this.questService.createQuest(data);
   }
+  @Post('remove_quest')
+  @ApiOperation({ summary: 'remove quest' })
+  @ApiBody({
+    type: RemoveQuestDto,
+    description:
+      'reomve quest by id',
+  })
+  async removeQuest(
+    @Body() data: RemoveQuestDto,
+  ) {
+    return await this.questService.removeQuest(data);
+  }
+
   @Post('change_quest')
   @ApiOperation({ summary: 'Change quest' })
   @ApiBody({

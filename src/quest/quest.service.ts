@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateQuestDto } from './dto/createQuest.dto';
 import { QuizService } from '../quiz/quiz.service';
 import { ChangeQuestDto } from './dto/changeQuest.dto';
+import { RemoveQuestDto } from './dto/removeQuest.dto';
 
 @Injectable()
 export class QuestService {
@@ -22,6 +23,20 @@ export class QuestService {
           answer: data.answer,
         },
       });
+
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
+  }
+  async removeQuest(data: RemoveQuestDto) {
+    try {
+      const { id } = data
+      await this.findQuest(id)
+      return await this.prisma.question.delete({
+        where: {
+          id: id
+        }
+      })
 
     } catch (e) {
       throw new NotFoundException(e);

@@ -57,17 +57,14 @@ export class QuestService {
   }
   async findQuest(id: string) {
     try {
-      const quest = await this.prisma.question.findFirst({
-        where: {
-          id: id
-        }
-      })
+      const quest = await this.prisma.question.findFirst({ where: { id } });
       if (!quest) {
-        throw new UnauthorizedException('Quiz not found');
+        throw new UnauthorizedException('Unauthorized access');
       }
-      return quest
+      return quest;
     } catch (e) {
-      throw new NotFoundException(e);
+      throw new UnauthorizedException(e);
     }
   }
+
 }

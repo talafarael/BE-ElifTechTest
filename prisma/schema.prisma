@@ -17,8 +17,8 @@ model Quiz{
   id       String  @id @default(auto()) @map("_id") @db.ObjectId 
   title String 
   description String
-    questions   Question[] @relation("QuizQuestions")
-  responses   Response[]
+  questions   Question[] @relation("QuizQuestions")
+  responses   Response[]  @relation("QuizResponses") 
 }
 
 model Question {
@@ -29,12 +29,12 @@ model Question {
   type     String
   answer   String[]
 }
+
 model Response {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  quiz     Quiz      @relation(fields: [quizId], references: [id])
-  quizId   String    @db.ObjectId
-  userId   String    
-  answers  Json     
-  passingTime String
-  createdAt DateTime @default(now()) 
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  quiz        Quiz      @relation("QuizResponses", fields: [quizId], references: [id])
+  quizId      String    @db.ObjectId
+  answers     Json      
+  passingTime Int       
+  createdAt   DateTime  @default(now()) @updatedAt
 }

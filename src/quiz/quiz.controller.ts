@@ -19,6 +19,7 @@ export class QuizController {
   ) {
     return await this.quizService.craeteQuiz(data);
   }
+
   @Post('change_quiz')
   @ApiOperation({ summary: 'Change a new quiz' })
   @ApiBody({
@@ -61,10 +62,12 @@ export class QuizController {
   async getProducts(
     @Query('page') page: string,
     @Query('limit') limit: string,
+    @Query('sortBy') sortBy: "title" | "id" | "countByQuestion",
+    @Query('excludeEmpty') excludeEmpty: boolean,
   ) {
     const pageNumber = parseInt(page, 10) || 1;
     const limitNumber = parseInt(limit, 10) || 10;
-    return this.quizService.get(pageNumber, limitNumber);
+    return this.quizService.get(pageNumber, limitNumber, sortBy, excludeEmpty);
   }
 
 

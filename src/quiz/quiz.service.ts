@@ -55,19 +55,49 @@ export class QuizService {
       throw new NotFoundException(e);
     }
   }
-  async get(page: number, limit: number) {
+  async get(
+    page: number,
+    limit: number,
+    sortBy: "title" | "id" | "countByQuestion" = "title",
+    excludeEmpty: boolean = true
+  ) {
     try {
       const skip = (page - 1) * limit;
+
+      let orderBy = {};
+      if (sortBy === "countByQuestion") {
+        orderBy = {
+          questions: {
+            _count: "desc",
+          },
+        };
+      } else if (["title", "id"].includes(sortBy)) {
+        orderBy = {
+          [sortBy]: "asc",
+        };
+      }
+
+      const where = excludeEmpty
+        ? {
+          questions: {
+            some: {},
+          },
+        }
+        : {};
+
       const [quiz, total] = await Promise.all([
         this.prisma.quiz.findMany({
           skip,
           take: limit,
+          where,
           include: {
             questions: true,
-          }
+          },
+          orderBy,
         }),
-        this.prisma.quiz.count(),
+        this.prisma.quiz.count({ where }),
       ]);
+
       return {
         data: quiz,
         page,
@@ -76,9 +106,11 @@ export class QuizService {
         totalPages: Math.ceil(total / limit),
       };
     } catch (e) {
+      console.log(e);
       throw new NotFoundException(e);
     }
   }
+
   async findQuiz(id: string) {
     try {
       const quiz = await this.prisma.quiz.findFirst({
